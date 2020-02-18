@@ -1,5 +1,0 @@
-this is first line
-hello world
-hello world!
-hello world!
-hello second world!
