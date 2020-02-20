@@ -9,15 +9,30 @@ public class User {
     private String password;
     private String email;
     private String phoneNo;
+    private String role;
 
 //  User class constructor:
-    public User(String userName, String password, String email, String phoneNo) {
+    public User(String password, String email, String role) {
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
+    public User(String userName, String password, String email, String phoneNo, String role) {
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.phoneNo = phoneNo;
+        this.role = role;
     }
 
+    @Override
+    public String toString (){
+        return "Name: " + userName + ", password: " + "private" + ", Email: " + email + ", PhoneNo: " + phoneNo + ", Role: " + role;
+    }
+    public String dbPrint() {
+        return userName + "|" + password + "|" + email + "|" + phoneNo + "|" + role;
+    }
 //  User getters and setters:
     public String getUserName() {
         return userName;
@@ -46,6 +61,14 @@ public class User {
     }
     public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

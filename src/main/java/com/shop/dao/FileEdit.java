@@ -19,9 +19,9 @@ class FileEdit {
         try {
 //          Writing the given content to the given file:
             BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(resourceFile, true));
-            bufferedwriter.write(String.valueOf(newContent));
-//          Creating a new line after writing:
+            //Creating a new line before writing:
             bufferedwriter.newLine();
+            bufferedwriter.write(String.valueOf(newContent));
 //          Closing the output stream:
             bufferedwriter.close();
 
@@ -82,20 +82,15 @@ class FileEdit {
             String resourceFileContent = contentBuilder.toString();
 //          The file scanner can be closed now:
             resourceScanner.close();
-            System.out.println("\n*** resourceFileContent: ***\n\n" + resourceFileContent);
 
 //          Finding the line of text containing the given identifier:
             String targetLine = FileEdit.findLine(filename,"\\b" + identifier + "\\b");
-            System.out.println("\n*** targetLine: ***\n\n" + targetLine);
 
 //          Updating the target line of data with the new data:
             String newLine = targetLine.replaceAll(oldData, newData);
-            System.out.println("\n*** newLine: ***\n\n" + newLine);
 
 //          Updating the file content string with the new data:
             String newFileContent = resourceFileContent.replace(targetLine, newLine);
-            /** JUST CHECKING */ System.out.println("\n*** newFileContent: ***\n\n" + newFileContent);
-
 //          Updating the resource file with the new content:
 //          Initializing a way to overwrite the file's content:
             BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(resourceFile, false));

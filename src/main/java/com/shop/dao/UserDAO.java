@@ -33,8 +33,10 @@ public class UserDAO {
 //      Converting the List of user data Strings into a List of User objects:
         List<User> userList = new ArrayList<>();
         for (String userData : userDataList) {
-            String[] userDataValues = userData.split("\\|");
-            userList.add(new User(userDataValues[0], userDataValues[1], userDataValues[2], userDataValues[3]));
+            if (userData.length()>=5) {
+                String[] userDataValues = userData.split("\\|");
+                userList.add(new User(userDataValues[0], userDataValues[1], userDataValues[2], userDataValues[3], userDataValues[4]));
+            }
         }
 
 //      End result of the method - returning the User object ArrayList:
@@ -42,21 +44,14 @@ public class UserDAO {
     }
 
 /** Method to add new users to the database: */
-    public static void addUser(String newUserValues) throws ShopTechnicalException {
+    public void addUser(String newUserValues) throws ShopTechnicalException {
 
 //      Adding given values to end of the database:
         FileEdit.write("users.txt", newUserValues);
     }
 
-/** Method to update users in the database: */
-    public static void updateUser(String email, String targetParameter, String newValue) {
-
-//      Replacing the target parameter's value with the desired new value in the database:
-        FileEdit.replace("users.txt", email, targetParameter, newValue);
-    }
-
 /** Method to remove users from the database: */
-    public static void deleteUser(String email) {
+    public void deleteUser(String email) {
 
 //      Deleting a user's data from the user database:
         FileEdit.replace("users.txt", email, ".*", "");

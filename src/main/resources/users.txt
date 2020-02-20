@@ -1,3 +1,2 @@
-user1|password1|email1|phoneno1
-user2|password2|email2|phoneno2
-erfds|egtrvdf|ervdfvfd|0040252351352
+admin|adminadmin|admin@onlineshop.com|null|ADMIN
+marius|iteahome|marius.bistika@gmail.com|null|ADMIN

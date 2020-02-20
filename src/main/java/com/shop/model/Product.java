@@ -10,10 +10,10 @@ public class Product {
     private String category;
     private String price;
     private String quantity;
-    private String uniqueProdId;
+    private int uniqueProdId;
 
 //  Product class constructor:
-    public Product(String productName, String category, String price, String quantity, String uniqueProdId) {
+    public Product(String productName, String category, String price, String quantity, int uniqueProdId) {
         this.productName = productName;
         this.category = category;
         this.price = price;
@@ -24,6 +24,9 @@ public class Product {
     @Override
     public String toString (){
         return "Name: " + productName + ", Category: " + category + ", Price: " + price + ", ProductId: " + uniqueProdId;
+    }
+    public String DBprint () {
+        return productName + "|" + category + "|" + price + "|" + uniqueProdId + "|" + quantity;
     }
 
 
@@ -55,7 +58,7 @@ public class Product {
     public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
-    public String getUniqueProdId() {
+    public int getUniqueProdId() {
         return uniqueProdId;
     }
 

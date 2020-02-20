@@ -8,25 +8,26 @@ import com.shop.model.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ProductService {
-    public static void addProduct(String inputProdName, String inputProdCategory, String inputProdQuantity, String inputProducPrice) throws ShopTechnicalException {
+
+    public static void addProduct(String inputProdName, String inputProdCategory, String inputProdQuantity, String inputProductPrice) throws ShopTechnicalException {
         List<Integer> productIds = new ArrayList<>();
-        for (Product product: ProductDAO.findAllProducts()){
-            productIds.add(Integer.parseInt((product.getUniqueProdId())));
+        for (Product product : ProductDAO.findAllProducts()) {
+            productIds.add(product.getUniqueProdId());
         }
-        String productData = inputProdName + "|" + inputProdCategory + "|" + inputProdQuantity + "|" + inputProducPrice + "|" + (Collections.max(productIds)+1);
-        ProductDAO.createProduct(productData);
+        ProductDAO.createProduct(new Product(inputProdName, inputProdCategory, inputProdQuantity, inputProductPrice, (Collections.max(productIds) + 1)).DBprint());
     }
 
-    //    }
-    public static void displayProductsByCategoryAndName (String categoryName, String ProductName) throws ShopFileException {
-        for (Product product : ProductDAO.findAllProducts()
-        ) {
-            if (product.getCategory().matches(".*"+ categoryName + ".*") && product.getProductName().matches(".*"+ ProductName + ".*")) {
-                System.out.println(product.toString());
-            }
-        }
+    public List<Product> getProductsByCategoryAndName(String categoryName, String ProductName) throws ShopFileException {
+        return ProductDAO.findAllProducts().stream()
+                .filter(product -> matchesCategoryAndName(categoryName, ProductName, product))
+                .collect(Collectors.toList());
+    }
+
+    private boolean matchesCategoryAndName(String categoryName, String ProductName, Product product) {
+        return product.getCategory().matches(".*" + categoryName + ".*") && product.getProductName().matches(".*" + ProductName + ".*");
     }
 }

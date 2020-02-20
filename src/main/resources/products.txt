@@ -4,3 +4,5 @@ one|one|one|one|3
 one|one|one|one|4
 one|one|one|one|5
 one|one|one|one|6
+banane|fructe|3|7|45
+banane1|fructe|3|46|34
