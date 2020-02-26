@@ -1,30 +1,42 @@
 package com.shop.ui;
 
-import com.shop.ui.ui_handlers.InputPopUps;
-import com.shop.ui.ui_handlers.PrintUI;
 import com.shop.exception.ShopException;
 import com.shop.service.UserService;
+import com.shop.ui.handlers.InputPopUps;
+import com.shop.ui.validator.EmailValidator;
 
-/** SignUpUI class - creates new users by collecting user inputs. */
+import static com.shop.ui.handlers.InputPopUps.CANCELLED;
+
+/**
+ * SignUpUI class - creates new users by collecting user inputs.
+ */
 
 class SignUpUI {
-    private static final String CANCEL = "NullPointerExceptionFound";
+
+    private EmailValidator emailValidator = new EmailValidator();
     private UserService userService = new UserService();
 
-    //  SignUp UI starting point:
-    void displaySignUp() throws ShopException {
-        PrintUI.printBox("To sign up, please provide the following credentials:");
-        String inputEmail = InputPopUps.input("Email:");
-        String inputPassword = InputPopUps.input("New Password");
-        if (!inputEmail.matches(CANCEL) & !inputPassword.matches(CANCEL)) {
-            if (userService.signUp(inputPassword, inputEmail)) {
-                PrintUI.printBox("User Exists, Please Login.");
-            } else {
-                PrintUI.printBox("Welcome! Sign Up successful, please proceed to LogIn");
+    String displaySignUp() throws ShopException {
+        String dataToShow = "";
+        String email;
+        String password;
+        do {
+            email = InputPopUps.input(dataToShow + "\n\nPlease enter a valid email address:");
+            password = InputPopUps.input("Please enter a valid password:\nPassword cannot be empty");
+            if (!email.matches(CANCELLED) && !password.matches(CANCELLED)) {
+                if (emailValidator.isEmailValid(email) && !password.equals(".")) {
+                    if (userService.doesUserExist(email)) {
+                        return "User Exists, Please Login.";
+                    } else {
+                        userService.signUp(password, email);
+                        break;
+                    }
+                    } else {
+                    dataToShow = "Your email/password is invalid. Please retry.";
+                }
             }
-        }
-        else {
-            PrintUI.printBox("User canceled operation");
-        }
+        } while (!email.equals(CANCELLED) && !password.equals(CANCELLED));
+
+        return "";
     }
 }

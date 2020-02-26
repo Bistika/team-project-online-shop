@@ -2,77 +2,54 @@ package com.shop.dao;
 
 import com.shop.exception.ShopFileException;
 import com.shop.exception.ShopTechnicalException;
+import com.shop.model.Writable;
+
 import java.io.*;
 import java.util.Scanner;
 import java.util.regex.*;
 
 /** FileEdit class - allows manipulation of any file in the resources folder. */
 
-class FileEdit {
-
-/** Method for adding a new line of content to text files: */
-    static void write(String fileName, String newContent) throws ShopTechnicalException {
-
-//      Defining a String for the file path according to the given fileName:
+class FileEdit<T extends Writable> {
+    void write(String fileName, T newContent) throws ShopTechnicalException {
         String resourceFile = "./src/main/resources/" + fileName;
-
         try {
-//          Writing the given content to the given file:
             BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(resourceFile, true));
-            //Creating a new line before writing:
             bufferedwriter.newLine();
-            bufferedwriter.write(String.valueOf(newContent));
-//          Closing the output stream:
+            bufferedwriter.write(newContent.toDb());
             bufferedwriter.close();
 
-//      If file doesn't exist:
         } catch (IOException e) {
             throw new ShopFileException("File not found", e);
         }
     }
 
-/** Method for reading a file and returning a line of text matching a regex pattern: */
     static String findLine(String filename, String regex) {
-
-//      Defining a String for the resource file path according to the given fileName:
         String resourceFile = "./src/main/resources/"+filename;
-//      Initializing a String where the data will be stored:
         String lineData = null;
 
         try {
-//          Reading content from the given file:
             BufferedReader bufferedReader = new BufferedReader(new FileReader(resourceFile));
-//          Defining regex pattern from the corresponding method parameter (can be empty):
             Pattern pattern = Pattern.compile(regex);
-
-//          Defining regex matcher (text to be searched) as the current line being read:
             while ((lineData = bufferedReader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(lineData);
-//              If match is found, line is returned:
                 if (matcher.find()) {
                     return lineData;
                 }
             }
-//          Closing the input stream:
             bufferedReader.close();
 
-//      If the file can't be read:
         } catch (IOException e) {
             e.printStackTrace();
         }
-//      The method's end result - a line of data:
         return lineData;
 
     }
 
 /** Method for targeting a line of data from a text and replacing any part of its content: */
-    static void replace(String filename, String identifier, String oldData, String newData) throws NullPointerException {
-
+    void replace(String filename, String identifier, String oldData, String newData) throws ShopFileException {
         try {
-//          Reading the resource file and storing its content in a string:
-//          Pointing to the file to be read:
             File resourceFile = new File("./src/main/resources/" + filename);
-//          Initializing a way to read the file:
             Scanner resourceScanner = new Scanner(resourceFile);
 //          Temporarily converting text content to a String:
             StringBuilder contentBuilder = new StringBuilder();
@@ -100,9 +77,7 @@ class FileEdit {
 
 //      Managing possible exceptions:
         } catch (IOException e) {
-            System.out.println("File not found.");
-        } catch (NullPointerException e) {
-            System.out.println("Identifier returned no results.");
+            throw new ShopFileException("File Not Found", e);
         }
 
     }

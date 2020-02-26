@@ -3,39 +3,36 @@ package com.shop.model;
 
 /** Product class - the "purpose" of the shop. */
 
-public class Product {
+public class Product implements Writable{
 
 //  Product parameters:
-    private String productName;
+    private int id;
+    private String name;
     private String category;
     private String price;
-    private String quantity;
-    private int uniqueProdId;
+    private String stock;
 
 //  Product class constructor:
-    public Product(String productName, String category, String price, String quantity, int uniqueProdId) {
-        this.productName = productName;
+    public Product(int id, String name, String category, String price, String stock) {
+        this.id = id;
+        this.name = name;
         this.category = category;
         this.price = price;
-        this.quantity = quantity;
-        this.uniqueProdId = uniqueProdId;
+        this.stock = stock;
     }
 
     @Override
     public String toString (){
-        return "Name: " + productName + ", Category: " + category + ", Price: " + price + ", ProductId: " + uniqueProdId;
-    }
-    public String DBprint () {
-        return productName + "|" + category + "|" + price + "|" + uniqueProdId + "|" + quantity;
+        return "Name: " + name + ", Category: " + category + ", Price: " + price + ", ProductId: " + id;
     }
 
 
 //  Product getters and setters:
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return name;
     }
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCategory() {
@@ -52,14 +49,18 @@ public class Product {
         this.price = price;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public String getStock() {
+        return stock;
     }
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public void setStock(String stock) {
+        this.stock = stock;
     }
-    public int getUniqueProdId() {
-        return uniqueProdId;
+    public int getId() {
+        return id;
     }
 
+    @Override
+    public String toDb() {
+        return id + "|" + name + "|" + category + "|" + price + "|" + stock;
+    }
 }

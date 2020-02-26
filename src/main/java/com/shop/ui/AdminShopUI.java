@@ -1,61 +1,100 @@
 package com.shop.ui;
 
-import com.shop.ui.ui_handlers.InputPopUps;
-import com.shop.ui.ui_handlers.PrintUI;
 import com.shop.exception.ShopException;
+import com.shop.exception.ShopTechnicalException;
 import com.shop.model.Product;
 import com.shop.service.ProductService;
+import com.shop.ui.handlers.InputPopUps;
 
-public class AdminShopUI {
+import static com.shop.ui.handlers.InputPopUps.CANCELLED;
+
+class AdminShopUI {
+
+    private static final String CREATE_PRODUCT = "1";
+    private static final String FILTER_PRODUCTS = "2";
+    private static String dataToShow = "";
+
     private ProductService productService = new ProductService();
-    private static final String CANCEL = "NullPointerExceptionFound";
 
     void manageProducts() throws ShopException {
-        String userInput = null;
-        final String EXIT_MENU = "0";
+        String userInput;
+        String operationResult = "";
         do {
-            PrintUI.printBox("Admin Menu: ", "Create new products : 1", "Filter Products : 2", "Exit : 0");
-            userInput = InputPopUps.input("Option: ");
-            final String CREATE_PRODUCT = "1";
-            final String FILTER_PRODUCTS = "2";
+            userInput = InputPopUps.input("Admin product management options:" + dataToShow +"\nAdd products: 1\nFilter Products: 2\n\n " + operationResult);
             switch (userInput) {
-                case CREATE_PRODUCT: {
-                    PrintUI.printBox("Please insert new product name: ");
-                    String inputProdName = InputPopUps.input("Product Name: ");
-                    PrintUI.printBox("Please insert new product category: ");
-                    String inputProdCategory = InputPopUps.input("Product Category: ");
-                    PrintUI.printBox("Please insert new product quantity: ");
-                    String inputProdQuantity = InputPopUps.input("Product Quantity: ");
-                    PrintUI.printBox("Please insert new product price: ");
-                    String inputProdPrice = InputPopUps.input("Product Price: ");
-                    ProductService.addProduct(inputProdName, inputProdCategory, inputProdQuantity, inputProdPrice);
-                    PrintUI.printBox("Product Created.");
+                case CREATE_PRODUCT:
+                    operationResult = showAddProduct();
+                    dataToShow = "";
                     break;
-                }
-                case FILTER_PRODUCTS: {
-                        PrintUI.printBox("Please insert part of the product category and name as requested (blank accepted).");
-                        String categoryName = InputPopUps.input("Category: ");
-                        String productName = InputPopUps.input("Product Name: ");
-                        for (Product product : productService.getProductsByCategoryAndName(categoryName, productName)) {
-                            {
-                                PrintUI.printBox(product.toString());
-                            }
-                        }
-                    }
+                case FILTER_PRODUCTS:
+                    operationResult = showFilterProducts();
+                    dataToShow = "";
                     break;
-                case CANCEL: {
-                    PrintUI.printBox("User canceled operation.");
+                case CANCELLED:
+                    dataToShow = "";
+                    operationResult = "";
                     break;
-                }
-                case EXIT_MENU: {
-                    break;
-                }
-                default: {
-                    PrintUI.printBox("Please choose a valid option");
-                }
-
+                default:
+                    dataToShow = "Please choose a valid option";
+                    operationResult = "";
             }
-        } while (!userInput.equals(EXIT_MENU));
+        } while (!userInput.equals(CANCELLED));
+    }
 
+    private String showFilterProducts() {
+        String userInput = "";
+        StringBuilder categoryMenu = new StringBuilder();
+        StringBuilder productMenu = new StringBuilder();
+        StringBuilder filteredProducts = new StringBuilder();
+
+        do {
+            dataToShow = "";
+            categoryMenu.setLength(0);
+            productMenu.setLength(0);
+
+            for (String category : productService.getCategories()) {
+                categoryMenu.append(category).append("\n");
+            }
+            String categoryName = InputPopUps.input("Please filter products by the following Categories: \n\n" + categoryMenu);
+            if (!categoryName.equals(CANCELLED)) {
+                for (String name : productService.getProductNamesForCategory(categoryName)) {
+                    productMenu.append(name).append("\n");
+                }
+                String productName = InputPopUps.input("Please filter products by name: \n\n" + productMenu);
+
+                for (Product product : productService.getProductsByCategoryAndName(categoryName, productName)) {
+                    filteredProducts.append(product.toString()).append("\n");
+                }
+                break;
+            } else {
+                userInput = CANCELLED;
+            }
+
+        }while (!userInput.equals(CANCELLED));
+
+        if (filteredProducts.length()>0) {
+            return filteredProducts.toString();
+        } else{
+           return "No products found";
+        }
+    }
+
+    private String showAddProduct() throws ShopTechnicalException {
+        String result = "";
+        String inputProdName = InputPopUps.input("Please insert new product name: ");
+
+        String inputProdCategory = InputPopUps.input("Please insert new product category: ");
+
+        String inputProdQuantity = InputPopUps.input("Please insert new product quantity: ");
+
+        String inputProdPrice = InputPopUps.input("Please insert new product price: ");
+
+        if (!inputProdCategory.equals(CANCELLED) && !inputProdName.equals(CANCELLED) && !inputProdPrice.equals(CANCELLED) && !inputProdQuantity.equals(CANCELLED)) {
+            productService.addProduct(inputProdName, inputProdCategory, inputProdQuantity, inputProdPrice);
+            result = "Product Created.";
+        } else {
+            result = "User Canceled operation.";
+        }
+        return result;
     }
 }

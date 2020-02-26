@@ -1,6 +1,8 @@
 package com.shop.dao;
 
+        import com.shop.exception.ShopFileException;
         import com.shop.exception.ShopTechnicalException;
+        import com.shop.model.Product;
         import com.shop.model.User;
         import java.io.File;
         import java.io.FileNotFoundException;
@@ -11,7 +13,7 @@ package com.shop.dao;
 /** UserDAO class - allows user database manipulation. */
 
 public class UserDAO {
-
+    private FileEdit<User> userEditor = new FileEdit<>();
 /** Method to identify all users in the database and store them as objects in an ArrayList: */
     public List<User> findAllUsers() {
 
@@ -44,17 +46,13 @@ public class UserDAO {
     }
 
 /** Method to add new users to the database: */
-    public void addUser(String newUserValues) throws ShopTechnicalException {
-
-//      Adding given values to end of the database:
-        FileEdit.write("users.txt", newUserValues);
+    public void addUser(User user) throws ShopTechnicalException {
+        userEditor.write("users.txt", user);
     }
 
 /** Method to remove users from the database: */
-    public void deleteUser(String email) {
-
-//      Deleting a user's data from the user database:
-        FileEdit.replace("users.txt", email, ".*", "");
+    public void deleteUser(String email) throws ShopFileException {
+        userEditor.replace("users.txt", email, ".*", "");
     }
 
 }

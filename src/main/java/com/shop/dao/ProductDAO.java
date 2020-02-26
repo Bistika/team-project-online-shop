@@ -1,43 +1,34 @@
 package com.shop.dao;
 
+import com.shop.cache.ProductCache;
 import com.shop.exception.ShopFileException;
 import com.shop.exception.ShopTechnicalException;
 import com.shop.model.Product;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 
 public class ProductDAO {
-    public static void createProduct(String productData) throws ShopTechnicalException {
-        FileEdit.write("products.txt", productData);
+        private FileUtil<Product> productReader = new FileUtil<>();
+        private FileEdit<Product> productEditor = new FileEdit<>();
+        private FileUtil<String> sequenceReader = new FileUtil<>();
+
+        public Integer getNextId() throws ShopFileException {
+            List<Integer> sequence = new ArrayList<>();
+            List<String[]> ids = new ArrayList<>();
+            sequenceReader.readEntities("product_seq.txt", i-> String.valueOf(sequence.add((parseInt(i[0])))));
+            return (Collections.max(sequence)+1);
+        }
+
+    public void createProduct(Product product) throws ShopTechnicalException {
+        productEditor.write("products.txt", product);
     }
 
-    public static List <Product> findAllProducts() throws ShopFileException {
-        List<String> ProductData = new ArrayList<>();
-        try {
-            File productFile = new File("./src/main/resources/products.txt");
-            Scanner productScanner = new Scanner(productFile);
-            while (productScanner.hasNextLine()) {
-                    String line = productScanner.nextLine();
-                if (line.length() != 0) {
-                    ProductData.add(line);
-                }
-            }
-
-        } catch (
-                IOException e) {
-            throw new ShopFileException("Products File not found", e);
-        }
-        List<Product> ProdList = new ArrayList<>();
-        for (String prod : ProductData) {
-            String[] prodValues = prod.split("\\|");
-            ProdList.add(new Product(prodValues[0], prodValues[1], prodValues[2], prodValues[3], parseInt(prodValues[4])));
-        }
-        return ProdList;
+    public List<Product> findAllProducts() throws ShopFileException {
+        return productReader.readEntities("products.txt", lines -> new Product(parseInt(lines[0]), lines[1], lines[2], lines[3], lines[4]));
     }
+
 }
