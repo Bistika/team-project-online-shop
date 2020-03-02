@@ -1,0 +1,4 @@
+admin@onlineshop.com|admin|null|null|ADMIN
+user@onlineshop.com|user|null|null|SHOPPER
+marius.bistika@gmail.com|iteahome|null|null|ADMIN
+szocsmihai@gmail.com|iteahome|null|null|ADMIN
